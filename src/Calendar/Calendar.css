@@ -110,12 +110,10 @@ header .current-date {
 
 .calendar .days li:nth-child(7n) {
     border-right: 1px solid #EBE9F1;
-    /* Apply a border right to the last day of the week*/
 }
 
 .calendar .days li:nth-last-child(-n+7) {
     border-bottom: 1px solid #EBE9F1;
-    /* Apply a bottom border to the last week */
 }
 
 .text {

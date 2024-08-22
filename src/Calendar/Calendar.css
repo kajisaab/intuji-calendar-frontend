@@ -1,0 +1,152 @@
+/* Import Google font - Poppins */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #9B59B6;
+}
+
+.wrapper {
+
+    background: #fff;
+    border-radius: 10px;
+    /* box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12); */
+}
+
+.wrapper header {
+    display: flex;
+    align-items: center;
+    padding: 25px 30px 10px;
+    justify-content: space-between;
+}
+
+header .icons {
+    display: flex;
+}
+
+header .icons span {
+    height: 38px;
+    width: 38px;
+    margin: 0 1px;
+    cursor: pointer;
+    color: #878787;
+    text-align: center;
+    line-height: 38px;
+    font-size: 1.9rem;
+    user-select: none;
+    border-radius: 50%;
+}
+
+.icons span:last-child {
+    margin-right: -10px;
+}
+
+header .icons span:hover {
+    background: #f2f2f2;
+}
+
+header .current-date {
+    font-size: 1.45rem;
+    font-weight: 500;
+    color: black;
+}
+
+.calendar {
+    padding: 20px;
+}
+
+.calendar ul {
+    display: flex;
+    flex-wrap: wrap;
+    list-style: none;
+    text-align: center;
+}
+
+.calendar .days {
+    margin-bottom: 20px;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-auto-rows: minmax(50px, auto);
+    height: 100%;
+}
+
+.calendar li {
+    color: #333;
+    width: calc(100% / 7);
+    font-size: 1.07rem;
+}
+
+.calendar .weeks li {
+    font-weight: 500;
+    cursor: default;
+}
+
+.calendar .days li {
+    z-index: 1;
+    cursor: pointer;
+    position: relative;
+    aspect-ratio: 7 / 4.2;
+    width: 100%;
+}
+
+.calendar .days li:nth-child(even) {
+    border-left: 1px solid #EBE9F1;
+    border-top: 1px solid #EBE9F1;
+}
+
+.calendar .days li:nth-child(odd) {
+    border-top: 1px solid #EBE9F1;
+    border-left: 1px solid #EBE9F1;
+}
+
+.calendar .days li:nth-child(7n) {
+    border-right: 1px solid #EBE9F1;
+    /* Apply a border right to the last day of the week*/
+}
+
+.calendar .days li:nth-last-child(-n+7) {
+    border-bottom: 1px solid #EBE9F1;
+    /* Apply a bottom border to the last week */
+}
+
+.text {
+    position: absolute;
+    bottom: 5px;
+    right: 20px;
+    color: black;
+    background: transparent;
+}
+
+.days li.inactive {
+    color: #aaa;
+}
+
+.days li.active {
+    color: #fff;
+}
+
+.days li::before {
+    position: absolute;
+    content: "";
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: -1;
+}
+
+.days li.active::before {
+    background: #f2f2f2;
+}
+
+.days li:not(.active):hover::before {
+    background: #f2f2f2;
+}

@@ -1,0 +1,78 @@
+.calendar__page__wrapper {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    color: black;
+    background-color: #fff
+}
+
+.aside__menu {
+    background-color: #fff;
+    min-width: 50px;
+    max-width: 252px;
+    width: 100%;
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-right: 1px solid #EBE9F1;
+}
+
+.calendar__section {
+    flex: 1;
+    width: 100vw;
+    height: 100vh;
+    overflow-y: auto;
+}
+
+
+.button__container {
+    width: 100%;
+    padding: 19px 12px 0 17px
+}
+
+.add__event__button {
+    width: 100%;
+    background-color: #7367F0;
+    outline: none;
+    border: 0;
+}
+
+.add__event__button:focus {
+    outline: none
+}
+
+.filter__container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    font-family: 'Montserrat', sans-serif;
+    padding-left: 22px;
+    font-weight: 500px;
+    font-size: 14px;
+    line-height: 17.07px;
+    letter-spacing: 0.4px;
+}
+
+.filter__title {
+    color: #B9B9C3;
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 23px;
+    letter-spacing: 0.6px;
+}
+
+.button__filter__container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 39px;
+}
+
+.image {
+    width: 250px
+}

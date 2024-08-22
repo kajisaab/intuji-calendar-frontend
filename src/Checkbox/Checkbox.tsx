@@ -1,10 +1,11 @@
 import './Checkbox.css';
+import { CheckboxPropsInterface } from './Checkbox.interface';
 
-function Checkbox({ name, color = '#2196F3' }: { name: string; color?: string }) {
-    console.log({ name });
+function Checkbox(props: CheckboxPropsInterface) {
+    const { name, color, checked, onChange } = props;
     return (
         <label className="container">
-            <input type="checkbox" checked={true} />
+            <input type="checkbox" checked={checked} name={name} onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange(e)} />
             <span className="checkmark" style={{ backgroundColor: color }}></span>
             {name}
         </label>

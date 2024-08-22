@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import Calendar from '../../Calendar';
 import Checkbox from '../../Checkbox';
 import logo from '../../assets/Image.svg';
@@ -5,6 +6,13 @@ import './CalendarPage.css';
 import { filterKeys, filterKeysInterface } from './utils';
 
 function CalendarPage() {
+    const [filterKeysList, setFilterKeysList] = useState<filterKeysInterface[]>([...filterKeys]);
+
+    const onCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, checked } = e.target;
+        setFilterKeysList(() => [...filterKeysList.map((dat) => (dat.name === name ? { ...dat, checked: checked } : dat))]);
+    };
+
     return (
         <section className="calendar__page__wrapper">
             <aside className="aside__menu">
@@ -16,8 +24,8 @@ function CalendarPage() {
                     </div>
                     <div className="filter__container">
                         <span className="filter__title">FILTER</span>
-                        {filterKeys.map((dat: filterKeysInterface) => (
-                            <Checkbox name={dat.name} color={dat.color} />
+                        {filterKeysList.map((dat: filterKeysInterface, index: number) => (
+                            <Checkbox key={index} name={dat.name} color={dat.color} checked={dat.checked} onChange={onCheckboxChange} />
                         ))}
                     </div>
                 </div>

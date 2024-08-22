@@ -6,17 +6,24 @@ function Calendar() {
     const [currYear, setCurrYear] = useState(date.getFullYear());
     const [currMonth, setCurrMonth] = useState(date.getMonth());
     const [days, setDays] = useState<JSX.Element[]>([]);
+    const [selectedDate, setSelectedDate] = useState<string | null>(null);
+    const [modalPosition, setModalPosition] = useState<{ top: number; left: number } | null>(null);
 
     const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const handleCalendarCellClickEvent = (e: any) => {
-        console.log({ e });
-        alert(e);
+    const handleCalendarCellClickEvent = (day: number, month: string, event: React.MouseEvent) => {
+        setSelectedDate(`${month} ${day}, ${currYear}`);
+
+        const rect = (event.target as HTMLElement).getBoundingClientRect();
+        setModalPosition({
+            top: rect.top + window.scrollY, // Position the modal at the bottom of the li element
+            left: rect.left + window.scrollX
+        });
     };
 
     useEffect(() => {
         renderCalendar();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currYear, currMonth]);
 
     const renderCalendar = () => {
@@ -27,16 +34,10 @@ function Calendar() {
 
         const liTag = [];
 
-        console.log({ currMonth });
-
         // this is for the previous month date.
         for (let i = firstDayofMonth; i > 0; i--) {
             liTag.push(
-                <li
-                    className="inactive"
-                    key={`prev-${i}`}
-                    onClick={() => handleCalendarCellClickEvent(`Clicked ${lastDateofLastMonth - i + 1} from previous month ${months[currMonth - 1]}`)}
-                >
+                <li className="inactive" key={`prev-${i}`} onClick={(e) => handleCalendarCellClickEvent(lastDateofLastMonth - i + 1, months[currMonth - 1], e)}>
                     <span className="text">{lastDateofLastMonth - i + 1}</span>
                 </li>
             );
@@ -46,7 +47,7 @@ function Calendar() {
         for (let i = 1; i <= lastDateofMonth; i++) {
             const isToday = i === date.getDate() && currMonth === new Date().getMonth() && currYear === new Date().getFullYear() ? 'active' : '';
             liTag.push(
-                <li className={isToday} key={`curr-${i}`} onClick={() => handleCalendarCellClickEvent(`Clicked ${i} from current month ${months[currMonth]}`)}>
+                <li className={isToday} key={`curr-${i}`} onClick={(e) => handleCalendarCellClickEvent(i, months[currMonth], e)}>
                     <span className="text">{i}</span>
                 </li>
             );
@@ -55,11 +56,7 @@ function Calendar() {
         // this is for the next month date.
         for (let i = lastDayofMonth; i < 6; i++) {
             liTag.push(
-                <li
-                    className="inactive"
-                    key={`next-${i}`}
-                    onClick={() => handleCalendarCellClickEvent(`Clicked ${i - lastDayofMonth + 1} from next month ${months[currMonth + 1]}`)}
-                >
+                <li className="inactive" key={`next-${i}`} onClick={(e) => handleCalendarCellClickEvent(i - lastDayofMonth + 1, months[currMonth + 1], e)}>
                     <span className="text">{i - lastDayofMonth + 1}</span>
                 </li>
             );
@@ -105,6 +102,11 @@ function Calendar() {
                 </ul>
                 <ul className="days">{days}</ul>
             </div>
+            {selectedDate && modalPosition && (
+                <div className="modal-dropdown" style={{ top: modalPosition.top - 5, left: modalPosition.left }}>
+                    <p>{selectedDate}</p>
+                </div>
+            )}
         </div>
     );
 }

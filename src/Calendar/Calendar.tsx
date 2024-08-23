@@ -8,20 +8,28 @@ function Calendar(props: any) {
     const [currYear, setCurrYear] = useState(date.getFullYear());
     const [currMonth, setCurrMonth] = useState(date.getMonth());
     const [days, setDays] = useState<JSX.Element[]>([]);
-    const [selectedDate, setSelectedDate] = useState<string | null>(null);
+    const [selectedDate, setSelectedDate] = useState<any | null>({});
     const [modalPosition, setModalPosition] = useState<{ top: number; left: number } | null>(null);
 
     const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
     const handleCalendarCellClickEvent = (day: number, month: string, event: React.MouseEvent, eventBanner: any[]) => {
         console.log({ eventBanner });
-        setSelectedDate(`${month} ${day}, ${currYear}`);
+        setSelectedDate({
+            title: `${month} ${day}, ${currYear}`,
+            list: eventBanner
+        });
 
         const rect = (event.target as HTMLElement).getBoundingClientRect();
         setModalPosition({
             top: rect.top + window.scrollY, // Position the modal at the bottom of the li element
             left: rect.left + window.scrollX
         });
+    };
+
+    const handleStripClick = (e: React.MouseEvent, event: any) => {
+        e.stopPropagation();
+        alert(event.summary);
     };
 
     useEffect(() => {
@@ -50,10 +58,16 @@ function Calendar(props: any) {
                 return calendar_month === currMonth - 1 && calendar_year === currYear && calendar_date === i;
             });
 
-            // Map the events to a banner or other display format
             // Map the events to a stripe banner
             const eventBanner = previsouMonth.map((event: any) => (
-                <div className="event-stripe" key={event.id} style={{ backgroundColor: event.color }}>
+                <div
+                    className="event-stripe"
+                    key={event.id}
+                    style={{ backgroundColor: event.color }}
+                    onClick={(e) => {
+                        handleStripClick(e, event);
+                    }}
+                >
                     {event.summary}
                 </div>
             ));
@@ -80,10 +94,9 @@ function Calendar(props: any) {
 
             const isToday = i === date.getDate() && currMonth === new Date().getMonth() && currYear === new Date().getFullYear() ? 'active' : '';
 
-            // Map the events to a banner or other display format
             // Map the events to a stripe banner
             const eventBanner = CurrentMonthData.map((event: any) => (
-                <div className="event-stripe" key={event.id} style={{ backgroundColor: event.color }}>
+                <div className="event-stripe" key={event.id} style={{ backgroundColor: event.color }} onClick={(e) => handleStripClick(e, event)}>
                     {event.summary}
                 </div>
             ));
@@ -108,10 +121,9 @@ function Calendar(props: any) {
                 return calendar_month === currMonth + 1 && calendar_year === currYear && calendar_date === i;
             });
 
-            // Map the events to a banner or other display format
             // Map the events to a stripe banner
             const eventBanner = NextMonthDate.map((event: any) => (
-                <div className="event-stripe" key={event.id} style={{ backgroundColor: event.color }}>
+                <div className="event-stripe" key={event.id} style={{ backgroundColor: event.color }} onClick={(e) => handleStripClick(e, event)}>
                     {event.summary}
                 </div>
             ));
@@ -143,10 +155,24 @@ function Calendar(props: any) {
             <header>
                 <p className="current-date">{`${months[currMonth]} ${currYear}`}</p>
                 <div className="icons">
-                    <span id="prev" className="material-symbols-rounded" onClick={() => handlePrevNext('prev')}>
+                    <span
+                        id="prev"
+                        className="material-symbols-rounded"
+                        onClick={() => {
+                            setSelectedDate({});
+                            handlePrevNext('prev');
+                        }}
+                    >
                         chevron_left
                     </span>
-                    <span id="next" className="material-symbols-rounded" onClick={() => handlePrevNext('next')}>
+                    <span
+                        id="next"
+                        className="material-symbols-rounded"
+                        onClick={() => {
+                            setSelectedDate({});
+                            handlePrevNext('next');
+                        }}
+                    >
                         chevron_right
                     </span>
                 </div>
@@ -163,9 +189,19 @@ function Calendar(props: any) {
                 </ul>
                 <ul className="days">{days}</ul>
             </div>
-            {selectedDate && modalPosition && (
+            {Object.keys(selectedDate).length > 0 && modalPosition && (
                 <div className="modal-dropdown" style={{ top: modalPosition.top - 5, left: modalPosition.left }}>
-                    <p>{selectedDate}</p>
+                    <div className="modal__dropdown__header">
+                        <p>{selectedDate.title}</p>
+                        <span id="close" className="material-symbols-rounded" onClick={() => setSelectedDate({})}>
+                            close
+                        </span>
+                    </div>
+                    <div className="modal__events__container">
+                        {selectedDate.list?.map((dat: any) => (
+                            <div className="modal__event__stripe">{dat.summary}</div>
+                        ))}
+                    </div>
                 </div>
             )}
         </div>

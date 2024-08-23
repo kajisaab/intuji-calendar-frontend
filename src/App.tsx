@@ -1,10 +1,11 @@
 import './App.css';
-import CalendarPage from './pages/CalendarPage';
+import LandingPage from './pages/LandingPage';
 
 function App() {
     return (
         <>
-            <CalendarPage />
+            <LandingPage />
+            {/* <CalendarPage /> */}
         </>
     );
 }

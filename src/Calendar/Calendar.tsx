@@ -13,7 +13,8 @@ function Calendar(props: any) {
 
     const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
-    const handleCalendarCellClickEvent = (day: number, month: string, event: React.MouseEvent) => {
+    const handleCalendarCellClickEvent = (day: number, month: string, event: React.MouseEvent, eventBanner: any[]) => {
+        console.log({ eventBanner });
         setSelectedDate(`${month} ${day}, ${currYear}`);
 
         const rect = (event.target as HTMLElement).getBoundingClientRect();
@@ -23,7 +24,6 @@ function Calendar(props: any) {
         });
     };
 
-    console.log({ eventList });
     useEffect(() => {
         renderCalendar();
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -39,46 +39,86 @@ function Calendar(props: any) {
 
         // this is for the previous month date.
         for (let i = firstDayofMonth; i > 0; i--) {
+            let calendar_date = 0;
+            let calendar_month = 0;
+            let calendar_year = 0;
+
             const previsouMonth = eventList.filter((dat: any) => {
-                const month = new Date(dat.created).getMonth();
-                return month === currMonth - 1;
+                calendar_month = new Date(dat.created).getMonth();
+                calendar_date = new Date(dat.created).getDate();
+                calendar_year = new Date(dat.created).getFullYear();
+                return calendar_month === currMonth - 1 && calendar_year === currYear && calendar_date === i;
             });
 
-            console.log({ previsouMonth });
+            // Map the events to a banner or other display format
+            // Map the events to a stripe banner
+            const eventBanner = previsouMonth.map((event: any) => (
+                <div className="event-stripe" key={event.id} style={{ backgroundColor: event.color }}>
+                    {event.summary}
+                </div>
+            ));
             liTag.push(
-                <li className="inactive" key={`prev-${i}`} onClick={(e) => handleCalendarCellClickEvent(lastDateofLastMonth - i + 1, months[currMonth - 1], e)}>
+                <li className="inactive" key={`prev-${i}`} onClick={(e) => handleCalendarCellClickEvent(lastDateofLastMonth - i + 1, months[currMonth - 1], e, previsouMonth)}>
                     <span className="text">{lastDateofLastMonth - i + 1}</span>
+                    {eventBanner.length > 0 && <div className="events-container">{eventBanner}</div>}
                 </li>
             );
         }
 
         // this is for the current month date.
         for (let i = 1; i <= lastDateofMonth; i++) {
+            let calendar_date = 0;
+            let calendar_month = 0;
+            let calendar_year = 0;
+
             const CurrentMonthData = eventList.filter((dat: any) => {
-                const month = new Date(dat.created).getMonth();
-                return month === currMonth;
+                calendar_month = new Date(dat.created).getMonth();
+                calendar_date = new Date(dat.created).getDate();
+                calendar_year = new Date(dat.created).getFullYear();
+                return calendar_month === currMonth && calendar_year === currYear && calendar_date === i;
             });
 
-            console.log({ CurrentMonthData });
             const isToday = i === date.getDate() && currMonth === new Date().getMonth() && currYear === new Date().getFullYear() ? 'active' : '';
+
+            // Map the events to a banner or other display format
+            // Map the events to a stripe banner
+            const eventBanner = CurrentMonthData.map((event: any) => (
+                <div className="event-stripe" key={event.id} style={{ backgroundColor: event.color }}>
+                    {event.summary}
+                </div>
+            ));
             liTag.push(
-                <li className={isToday} key={`curr-${i}`} onClick={(e) => handleCalendarCellClickEvent(i, months[currMonth], e)}>
+                <li className={isToday} key={`curr-${i}`} onClick={(e) => handleCalendarCellClickEvent(i, months[currMonth], e, CurrentMonthData)}>
                     <span className="text">{i}</span>
+                    {eventBanner.length > 0 && <div className="events-container">{eventBanner}</div>}
                 </li>
             );
         }
 
         // this is for the next month date.
         for (let i = lastDayofMonth; i < 6; i++) {
+            let calendar_date = 0;
+            let calendar_month = 0;
+            let calendar_year = 0;
+
             const NextMonthDate = eventList.filter((dat: any) => {
-                const month = new Date(dat.created).getMonth();
-                return month === currMonth + 1;
+                calendar_month = new Date(dat.created).getMonth();
+                calendar_date = new Date(dat.created).getDate();
+                calendar_year = new Date(dat.created).getFullYear();
+                return calendar_month === currMonth + 1 && calendar_year === currYear && calendar_date === i;
             });
 
-            console.log({ NextMonthDate });
+            // Map the events to a banner or other display format
+            // Map the events to a stripe banner
+            const eventBanner = NextMonthDate.map((event: any) => (
+                <div className="event-stripe" key={event.id} style={{ backgroundColor: event.color }}>
+                    {event.summary}
+                </div>
+            ));
             liTag.push(
-                <li className="inactive" key={`next-${i}`} onClick={(e) => handleCalendarCellClickEvent(i - lastDayofMonth + 1, months[currMonth + 1], e)}>
+                <li className="inactive" key={`next-${i}`} onClick={(e) => handleCalendarCellClickEvent(i - lastDayofMonth + 1, months[currMonth + 1], e, NextMonthDate)}>
                     <span className="text">{i - lastDayofMonth + 1}</span>
+                    {eventBanner.length > 0 && <div className="events-container">{eventBanner}</div>}
                 </li>
             );
         }

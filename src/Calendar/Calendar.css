@@ -117,8 +117,8 @@ header .current-date {
 
 .text {
     position: absolute;
-    bottom: 5px;
-    right: 20px;
+    top: 5px;
+    left: 15px;
     color: black;
     background: transparent;
 }
@@ -178,4 +178,39 @@ header .current-date {
         transform: translateY(-100%);
         opacity: 1;
     }
+}
+
+.events-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    flex-direction: column;
+    gap: 5px;
+    overflow: hidden;
+}
+
+.event-stripe {
+    display: flex;
+    width: 100%;
+    height: 25%;
+    font-size: 0.8750em;
+    padding-left: 5px;
+    border-radius: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 0 2px;
+    pointer-events: none;
+}
+
+.event-stripe:nth-child(even) {
+    background-color: #FF9F431F;
+    color: #FF9F43
+}
+
+.event-stripe:nth-child(odd) {
+    background-color: #7367F01F;
+    color: #7367F0
 }

@@ -8,7 +8,6 @@ function navigate(url: string) {
 async function auth() {
     try {
         const response = await axios.post('http://localhost:3000/v1/api/google/getUrl');
-        console.log({ response });
 
         navigate(response?.data?.data);
     } catch (err) {

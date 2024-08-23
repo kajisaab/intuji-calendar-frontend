@@ -1,18 +1,58 @@
-import { useState } from 'react';
+import { useEffect, useLayoutEffect, useState } from 'react';
 import Calendar from '../../Calendar';
 import Checkbox from '../../Checkbox';
 import logo from '../../assets/Image.svg';
 import './CalendarPage.css';
 import { filterKeys, filterKeysInterface } from './utils';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import axios from 'axios';
 
 function CalendarPage() {
     const [filterKeysList, setFilterKeysList] = useState<filterKeysInterface[]>([...filterKeys]);
+    const [searchParams] = useSearchParams();
+    const accessToken = searchParams.get('access_token');
+    const googleAccessToken = searchParams.get('google_access_token');
+    const refreshToken = searchParams.get('refresh_token');
+    const navigate = useNavigate();
 
     const onCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, checked } = e.target;
         setFilterKeysList(() => [...filterKeysList.map((dat) => (dat.name === name ? { ...dat, checked: checked } : dat))]);
     };
 
+    useLayoutEffect(() => {
+        if (accessToken && accessToken !== 'null') {
+            localStorage.setItem('access_token', accessToken as string);
+        }
+
+        if (googleAccessToken && googleAccessToken !== '' && googleAccessToken !== 'null') {
+            document.cookie = `google_access_token=${googleAccessToken}; path = /; max-age=3600000; SameSite=Lax`;
+        }
+
+        if (refreshToken && refreshToken !== '' && refreshToken !== 'null') {
+            document.cookie = `refresh_token=${refreshToken}; path = /; max-age=604800000; SameSite=Lax`;
+        }
+
+        navigate(location.pathname, { replace: true });
+    }, [accessToken]);
+
+    const fetchEvents = async () => {
+        try {
+            const response = await axios.get('http://localhost:3000/v1/api/calendar/get-event', {
+                withCredentials: true,
+                headers: {
+                    'X-XSRF-TOKEN': localStorage.getItem('access_token') as string
+                }
+            });
+            console.log({ response });
+        } catch (err) {
+            console.log({ err });
+        }
+    };
+
+    useEffect(() => {
+        fetchEvents();
+    }, []);
     return (
         <section className="calendar__page__wrapper">
             <aside className="aside__menu">

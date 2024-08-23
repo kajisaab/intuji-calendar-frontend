@@ -9,6 +9,7 @@ import axios from 'axios';
 
 function CalendarPage() {
     const [filterKeysList, setFilterKeysList] = useState<filterKeysInterface[]>([...filterKeys]);
+    const [eventList, setEventList] = useState([]);
     const [searchParams] = useSearchParams();
     const accessToken = searchParams.get('access_token');
     const googleAccessToken = searchParams.get('google_access_token');
@@ -44,7 +45,11 @@ function CalendarPage() {
                     'X-XSRF-TOKEN': localStorage.getItem('access_token') as string
                 }
             });
+
             console.log({ response });
+            if (response.data.data.list.length > 0) {
+                setEventList(response.data.data.list);
+            }
         } catch (err) {
             console.log({ err });
         }
@@ -74,7 +79,7 @@ function CalendarPage() {
                 </article>
             </aside>
             <div className="calendar__section">
-                <Calendar />
+                <Calendar eventList={eventList} />
             </div>
         </section>
     );

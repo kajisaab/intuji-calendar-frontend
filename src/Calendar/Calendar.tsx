@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from 'react';
 import './Calendar.css';
 
-function Calendar() {
+function Calendar(props: any) {
+    const { eventList } = props;
     const [date] = useState(new Date());
     const [currYear, setCurrYear] = useState(date.getFullYear());
     const [currMonth, setCurrMonth] = useState(date.getMonth());
@@ -21,10 +23,11 @@ function Calendar() {
         });
     };
 
+    console.log({ eventList });
     useEffect(() => {
         renderCalendar();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [currYear, currMonth]);
+    }, [currYear, currMonth, eventList]);
 
     const renderCalendar = () => {
         const firstDayofMonth = new Date(currYear, currMonth, 1).getDay(),
@@ -36,6 +39,12 @@ function Calendar() {
 
         // this is for the previous month date.
         for (let i = firstDayofMonth; i > 0; i--) {
+            const previsouMonth = eventList.filter((dat: any) => {
+                const month = new Date(dat.created).getMonth();
+                return month === currMonth - 1;
+            });
+
+            console.log({ previsouMonth });
             liTag.push(
                 <li className="inactive" key={`prev-${i}`} onClick={(e) => handleCalendarCellClickEvent(lastDateofLastMonth - i + 1, months[currMonth - 1], e)}>
                     <span className="text">{lastDateofLastMonth - i + 1}</span>
@@ -45,6 +54,12 @@ function Calendar() {
 
         // this is for the current month date.
         for (let i = 1; i <= lastDateofMonth; i++) {
+            const CurrentMonthData = eventList.filter((dat: any) => {
+                const month = new Date(dat.created).getMonth();
+                return month === currMonth;
+            });
+
+            console.log({ CurrentMonthData });
             const isToday = i === date.getDate() && currMonth === new Date().getMonth() && currYear === new Date().getFullYear() ? 'active' : '';
             liTag.push(
                 <li className={isToday} key={`curr-${i}`} onClick={(e) => handleCalendarCellClickEvent(i, months[currMonth], e)}>
@@ -55,6 +70,12 @@ function Calendar() {
 
         // this is for the next month date.
         for (let i = lastDayofMonth; i < 6; i++) {
+            const NextMonthDate = eventList.filter((dat: any) => {
+                const month = new Date(dat.created).getMonth();
+                return month === currMonth + 1;
+            });
+
+            console.log({ NextMonthDate });
             liTag.push(
                 <li className="inactive" key={`next-${i}`} onClick={(e) => handleCalendarCellClickEvent(i - lastDayofMonth + 1, months[currMonth + 1], e)}>
                     <span className="text">{i - lastDayofMonth + 1}</span>

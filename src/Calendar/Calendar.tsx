@@ -2,8 +2,21 @@
 import { useState, useEffect } from 'react';
 import './Calendar.css';
 
+const colorPalette: any = {
+    '0': 'blue',
+    '1': 'green',
+    '2': 'purple',
+    '3': 'red',
+    '4': 'yellow',
+    '5': 'orange',
+    '6': 'turquoise',
+    '7': 'gray',
+    '8': 'bold blue',
+    '9': 'bold green'
+};
+
 function Calendar(props: any) {
-    const { eventList } = props;
+    const { eventList, setDrawerState } = props;
     const [date] = useState(new Date());
     const [currYear, setCurrYear] = useState(date.getFullYear());
     const [currMonth, setCurrMonth] = useState(date.getMonth());
@@ -14,7 +27,6 @@ function Calendar(props: any) {
     const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
     const handleCalendarCellClickEvent = (day: number, month: string, event: React.MouseEvent, eventBanner: any[]) => {
-        console.log({ eventBanner });
         setSelectedDate({
             title: `${month} ${day}, ${currYear}`,
             list: eventBanner
@@ -29,7 +41,10 @@ function Calendar(props: any) {
 
     const handleStripClick = (e: React.MouseEvent, event: any) => {
         e.stopPropagation();
-        alert(event.summary);
+        setDrawerState({
+            open: true,
+            data: event
+        });
     };
 
     useEffect(() => {
@@ -45,25 +60,40 @@ function Calendar(props: any) {
 
         const liTag = [];
 
+        const isDateInCurrentMonth = (dateStr?: string) => {
+            if (!dateStr) return false;
+            const [year, month] = dateStr.split('-').map(Number);
+            return year === currYear && month - 1 === currMonth;
+        };
+
+        const formatDate = (date: Date) => {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        };
+
+        const isDateInRange = (date: Date, startDateTime?: string, endDateTime?: string) => {
+            if (!startDateTime || !endDateTime) return false;
+            const formattedDate = formatDate(date);
+            const formattedStartDate = formatDate(new Date(startDateTime));
+            const formattedEndDate = formatDate(new Date(endDateTime));
+            return formattedDate >= formattedStartDate && formattedDate <= formattedEndDate;
+        };
+
         // this is for the previous month date.
         for (let i = firstDayofMonth; i > 0; i--) {
-            let calendar_date = 0;
-            let calendar_month = 0;
-            let calendar_year = 0;
-
-            const previsouMonth = eventList.filter((dat: any) => {
-                calendar_month = new Date(dat.created).getMonth();
-                calendar_date = new Date(dat.created).getDate();
-                calendar_year = new Date(dat.created).getFullYear();
-                return calendar_month === currMonth - 1 && calendar_year === currYear && calendar_date === i;
+            const PrevMonthData = eventList.filter((dat: any) => {
+                const eventDate = dat.start.date; // Assuming event start date format "YYYY-MM-DD"
+                return isDateInCurrentMonth(eventDate) && new Date(eventDate).getDate() === i;
             });
 
             // Map the events to a stripe banner
-            const eventBanner = previsouMonth.map((event: any) => (
+            const eventBanner = PrevMonthData.map((event: any) => (
                 <div
                     className="event-stripe"
                     key={event.id}
-                    style={{ backgroundColor: event.color }}
+                    style={{ backgroundColor: colorPalette[event.colorId] || '#FF9F43', color: '#fff' }}
                     onClick={(e) => {
                         handleStripClick(e, event);
                     }}
@@ -72,7 +102,7 @@ function Calendar(props: any) {
                 </div>
             ));
             liTag.push(
-                <li className="inactive" key={`prev-${i}`} onClick={(e) => handleCalendarCellClickEvent(lastDateofLastMonth - i + 1, months[currMonth - 1], e, previsouMonth)}>
+                <li className="inactive" key={`prev-${i}`} onClick={(e) => handleCalendarCellClickEvent(lastDateofLastMonth - i + 1, months[currMonth - 1], e, PrevMonthData)}>
                     <span className="text">{lastDateofLastMonth - i + 1}</span>
                     {eventBanner.length > 0 && <div className="events-container">{eventBanner}</div>}
                 </li>
@@ -81,22 +111,23 @@ function Calendar(props: any) {
 
         // this is for the current month date.
         for (let i = 1; i <= lastDateofMonth; i++) {
-            let calendar_date = 0;
-            let calendar_month = 0;
-            let calendar_year = 0;
-
             const CurrentMonthData = eventList.filter((dat: any) => {
-                calendar_month = new Date(dat.created).getMonth();
-                calendar_date = new Date(dat.created).getDate();
-                calendar_year = new Date(dat.created).getFullYear();
-                return calendar_month === currMonth && calendar_year === currYear && calendar_date === i;
+                const eventStartDate = dat.start.date || dat.start.dateTime; // Assuming event start date format "YYYY-MM-DD"
+                const eventEndDate = dat.end.date || dat.end.dateTime; // Assuming event end date format "YYYY-MM-DD"
+                const dateToCheck = new Date(currYear, currMonth, i);
+                return isDateInRange(dateToCheck, eventStartDate, eventEndDate);
             });
 
             const isToday = i === date.getDate() && currMonth === new Date().getMonth() && currYear === new Date().getFullYear() ? 'active' : '';
 
             // Map the events to a stripe banner
             const eventBanner = CurrentMonthData.map((event: any) => (
-                <div className="event-stripe" key={event.id} style={{ backgroundColor: event.color }} onClick={(e) => handleStripClick(e, event)}>
+                <div
+                    className="event-stripe"
+                    key={event.id}
+                    style={{ backgroundColor: colorPalette[event.colorId] || '#FF9F43', color: '#fff' }}
+                    onClick={(e) => handleStripClick(e, event)}
+                >
                     {event.summary}
                 </div>
             ));
@@ -123,7 +154,12 @@ function Calendar(props: any) {
 
             // Map the events to a stripe banner
             const eventBanner = NextMonthDate.map((event: any) => (
-                <div className="event-stripe" key={event.id} style={{ backgroundColor: event.color }} onClick={(e) => handleStripClick(e, event)}>
+                <div
+                    className="event-stripe"
+                    key={event.id}
+                    style={{ backgroundColor: colorPalette[event.colorId] || '#FF9F43', color: '#fff' }}
+                    onClick={(e) => handleStripClick(e, event)}
+                >
                     {event.summary}
                 </div>
             ));
@@ -153,7 +189,6 @@ function Calendar(props: any) {
     return (
         <div className="wrapper">
             <header>
-                <p className="current-date">{`${months[currMonth]} ${currYear}`}</p>
                 <div className="icons">
                     <span
                         id="prev"
@@ -176,6 +211,7 @@ function Calendar(props: any) {
                         chevron_right
                     </span>
                 </div>
+                <p className="current-date">{`${months[currMonth]} ${currYear}`}</p>
             </header>
             <div className="calendar">
                 <ul className="weeks">
@@ -199,7 +235,9 @@ function Calendar(props: any) {
                     </div>
                     <div className="modal__events__container">
                         {selectedDate.list?.map((dat: any) => (
-                            <div className="modal__event__stripe">{dat.summary}</div>
+                            <div className="modal__event__stripe" style={{ backgroundColor: colorPalette[dat.colorId] || '#FF9F43', color: '#fff' }}>
+                                {dat.summary}
+                            </div>
                         ))}
                     </div>
                 </div>

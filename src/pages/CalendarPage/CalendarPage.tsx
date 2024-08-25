@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useLayoutEffect, useState } from 'react';
 import Calendar from '../../Calendar';
 import Checkbox from '../../Checkbox';
@@ -6,6 +7,7 @@ import './CalendarPage.css';
 import { filterKeys, filterKeysInterface } from './utils';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
+import Drawer from '../../Drawer';
 
 function CalendarPage() {
     const [filterKeysList, setFilterKeysList] = useState<filterKeysInterface[]>([...filterKeys]);
@@ -14,6 +16,10 @@ function CalendarPage() {
     const accessToken = searchParams.get('access_token');
     const googleAccessToken = searchParams.get('google_access_token');
     const refreshToken = searchParams.get('refresh_token');
+    const [drawerState, setDrawerState] = useState({
+        open: false,
+        data: {}
+    });
     const navigate = useNavigate();
 
     const onCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -46,7 +52,6 @@ function CalendarPage() {
                 }
             });
 
-            console.log({ response });
             if (response.data.data.list.length > 0) {
                 setEventList(response.data.data.list);
             }
@@ -63,7 +68,15 @@ function CalendarPage() {
             <aside className="aside__menu">
                 <div className="button__filter__container">
                     <div className="button__container">
-                        <button className="add__event__button" onClick={() => alert('clicked')}>
+                        <button
+                            className="add__event__button"
+                            onClick={() =>
+                                setDrawerState({
+                                    open: true,
+                                    data: {}
+                                })
+                            }
+                        >
                             Add Event
                         </button>
                     </div>
@@ -79,8 +92,9 @@ function CalendarPage() {
                 </article>
             </aside>
             <div className="calendar__section">
-                <Calendar eventList={eventList} />
+                <Calendar eventList={eventList} setDrawerState={(data: any) => setDrawerState({ ...data })} defaultData={drawerState.data} />
             </div>
+            <Drawer isOpen={drawerState.open} defaultData={drawerState.data} fetchEvents={fetchEvents} setDrawerState={setDrawerState} update={false} />
         </section>
     );
 }

@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from 'axios';
+import './LandingPage.css';
 
 function navigate(url: string) {
     window.location.href = url;
@@ -22,7 +23,9 @@ function LandingPage() {
                 <h1>Google Calendar App</h1>
             </div>
             <div>
-                <button onClick={() => auth()}>CLick me </button>
+                <button onClick={() => auth()} className="button">
+                    Sign in with google
+                </button>
             </div>
         </div>
     );

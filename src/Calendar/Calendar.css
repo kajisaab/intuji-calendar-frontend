@@ -25,7 +25,7 @@ body {
     display: flex;
     align-items: center;
     padding: 25px 30px 10px;
-    justify-content: space-between;
+    gap: 20px;
 }
 
 header .icons {
@@ -164,7 +164,7 @@ header .current-date {
     width: 100%;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
+    z-index: 10;
     transform: translateY(-100%);
     animation: slide-down-dropdown 0.3s ease-out;
     transform-origin: top;
@@ -210,15 +210,13 @@ header .current-date {
     padding: 0 2px;
 }
 
-.event-stripe:nth-child(even) {
-    background-color: #FF9F431F;
+/* .event-stripe:nth-child(even) {
     color: #FF9F43
 }
 
 .event-stripe:nth-child(odd) {
-    background-color: #7367F01F;
     color: #7367F0
-}
+} */
 
 .modal__events__container {
     width: 100%;

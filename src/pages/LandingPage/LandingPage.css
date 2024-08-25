@@ -1,1 +1,18 @@
 /* css for the landing page */
+
+.button {
+    outline: 0;
+    border: none;
+    padding: 0.6em 1.2em;
+    font-size: 1em;
+    font-weight: 500;
+    font-family: inherit;
+    background-color: #7367F0;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:focus {
+    outline: none;
+    border: none;
+}

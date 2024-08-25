@@ -188,30 +188,39 @@ function Calendar(props: any) {
 
     return (
         <div className="wrapper">
-            <header>
-                <div className="icons">
-                    <span
-                        id="prev"
-                        className="material-symbols-rounded"
-                        onClick={() => {
-                            setSelectedDate({});
-                            handlePrevNext('prev');
-                        }}
-                    >
-                        chevron_left
-                    </span>
-                    <span
-                        id="next"
-                        className="material-symbols-rounded"
-                        onClick={() => {
-                            setSelectedDate({});
-                            handlePrevNext('next');
-                        }}
-                    >
-                        chevron_right
-                    </span>
+            <header className="header">
+                <div className="header__left">
+                    <div className="icons">
+                        <span
+                            id="prev"
+                            className="material-symbols-rounded"
+                            onClick={() => {
+                                setSelectedDate({});
+                                handlePrevNext('prev');
+                            }}
+                        >
+                            chevron_left
+                        </span>
+                        <span
+                            id="next"
+                            className="material-symbols-rounded"
+                            onClick={() => {
+                                setSelectedDate({});
+                                handlePrevNext('next');
+                            }}
+                        >
+                            chevron_right
+                        </span>
+                    </div>
+                    <p className="current-date">{`${months[currMonth]} ${currYear}`}</p>
                 </div>
-                <p className="current-date">{`${months[currMonth]} ${currYear}`}</p>
+
+                <div className="header__right">
+                    <div className="box__column">Month</div>
+                    <div className="box__column">Week</div>
+                    <div className="box__column">Day</div>
+                    <div className="box__column">List</div>
+                </div>
             </header>
             <div className="calendar">
                 <ul className="weeks">

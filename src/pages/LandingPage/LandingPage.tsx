@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import axios from 'axios';
 import './LandingPage.css';
+import { fetch } from '../../utils/httpUtils';
 
 function navigate(url: string) {
     window.location.href = url;
@@ -8,7 +8,7 @@ function navigate(url: string) {
 
 async function auth() {
     try {
-        const response = await axios.post('http://localhost:3000/v1/api/google/getUrl');
+        const response = await fetch('v1/api/google/getUrl');
 
         navigate(response?.data?.data);
     } catch (err) {

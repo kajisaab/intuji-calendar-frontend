@@ -6,8 +6,8 @@ import logo from '../../assets/Image.svg';
 import './CalendarPage.css';
 import { filterKeys, filterKeysInterface } from './utils';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import axios from 'axios';
 import Drawer from '../../Drawer';
+import { fetch } from '../../utils/httpUtils';
 
 function CalendarPage() {
     const [filterKeysList, setFilterKeysList] = useState<filterKeysInterface[]>([...filterKeys]);
@@ -45,12 +45,8 @@ function CalendarPage() {
 
     const fetchEvents = async () => {
         try {
-            const response = await axios.get('http://localhost:3000/v1/api/calendar/get-event', {
-                withCredentials: true,
-                headers: {
-                    'X-XSRF-TOKEN': localStorage.getItem('access_token') as string
-                }
-            });
+            const response = await fetch('v1/api/calendar/get-event');
+            console.log({ response });
 
             if (response.data.data.list.length > 0) {
                 setEventList(response.data.data.list);

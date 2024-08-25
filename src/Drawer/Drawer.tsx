@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from 'react';
 import './Drawer.css';
 import { DrawerProps } from './Drawer.interface';
-import axios from 'axios';
+import { fetch, store } from '../utils/httpUtils';
 
 const defaultEventDetail = {
     summary: '',
@@ -14,7 +15,7 @@ const defaultEventDetail = {
 function Drawer(props: DrawerProps) {
     const { isOpen: open, defaultData, fetchEvents, setDrawerState, update = false } = props;
     const [isOpen, setIsOpen] = useState<boolean>(false);
-    const [defaultEventDetails, setDetailsEventDetails] = useState({});
+    const [defaultEventDetails, setDetailsEventDetails] = useState<any>({});
     const [eventDetails, setEventDetails] = useState({
         ...defaultEventDetail
     });
@@ -88,12 +89,7 @@ function Drawer(props: DrawerProps) {
                         ...eventDetails
                     };
                 }
-                await axios.post(`http://localhost:3000/v1/api/calendar/create-event`, payload, {
-                    withCredentials: true,
-                    headers: {
-                        'X-XSRF-TOKEN': localStorage.getItem('access_token')
-                    }
-                });
+                await store(`v1/api/calendar/create-event`, payload);
                 setDrawerState({ open: false, data: {} });
                 fetchEvents();
             } catch (err) {
@@ -107,6 +103,16 @@ function Drawer(props: DrawerProps) {
         setDetailsEventDetails({});
         setDrawerState({ open: false, data: {} });
         setIsOpen(false);
+    };
+
+    const handleDelete = async () => {
+        try {
+            fetch(`v1/api/calendar/delete-event/${defaultEventDetails?.id}`);
+            setDrawerState({ open: false, data: {} });
+            fetchEvents();
+        } catch (err) {
+            console.log({ err });
+        }
     };
 
     return (
@@ -157,6 +163,7 @@ function Drawer(props: DrawerProps) {
                         </div>
                     </div>
                     <div className="form__button__container">
+                        {defaultData && Object.keys(defaultData).length > 0 && <button onClick={handleDelete}>Delete</button>}
                         <button onClick={handleSubmit}>{defaultData && Object.keys(defaultData).length > 0 ? 'Update Event' : 'Add Event'}</button>
                     </div>
                 </div>
